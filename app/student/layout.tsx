@@ -51,8 +51,13 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
   }, [user?.id]);
 
   const handleSignOut = async () => {
-    await signOut();
-    router.push("/login");
+    await signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          router.push("/login");
+        },
+      },
+    });
   };
 
   return (

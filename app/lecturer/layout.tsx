@@ -38,8 +38,13 @@ export default function LecturerLayout({ children }: { children: React.ReactNode
   const user = session?.user;
 
   const handleSignOut = async () => {
-    await signOut();
-    router.push("/login");
+    await signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          router.push("/login");
+        },
+      },
+    });
   };
 
   return (
