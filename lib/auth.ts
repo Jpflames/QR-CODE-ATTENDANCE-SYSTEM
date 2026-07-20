@@ -3,11 +3,8 @@ import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { MongoClient } from "mongodb";
 import { createAuthMiddleware, APIError } from "better-auth/api";
 
-if (!process.env.MONGODB_URI) {
-  throw new Error("MONGODB_URI is not set in environment variables");
-}
-
-const client = new MongoClient(process.env.MONGODB_URI);
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/dummy";
+const client = new MongoClient(MONGODB_URI);
 const db = client.db();
 
 export const auth = betterAuth({

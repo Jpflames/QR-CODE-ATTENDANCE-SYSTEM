@@ -5,6 +5,8 @@ import { Lecturer } from "@/models/Lecturer";
 import { Department } from "@/models/Department";
 import { Course } from "@/models/Course";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     await connectToDatabase();

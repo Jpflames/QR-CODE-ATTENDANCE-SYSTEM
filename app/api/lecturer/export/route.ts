@@ -3,6 +3,8 @@ import { connectToDatabase } from "@/lib/mongodb";
 import { Attendance } from "@/models/Attendance";
 import { generateExcelAttendanceReport, generateCSVAttendanceReport } from "@/services/report-generator";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);

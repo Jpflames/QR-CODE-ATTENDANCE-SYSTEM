@@ -4,6 +4,8 @@ import { Institution } from "@/models/Institution";
 import { Department } from "@/models/Department";
 import { Programme } from "@/models/Programme";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(req: NextRequest) {
   try {
     await connectToDatabase();
