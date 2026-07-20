@@ -1,5 +1,6 @@
 "use server";
 
+import mongoose from "mongoose";
 import { connectToDatabase } from "@/lib/mongodb";
 import { Student } from "@/models/Student";
 import { CourseRegistration } from "@/models/CourseRegistration";
@@ -19,7 +20,12 @@ export async function registerStudentCourses(data: {
   try {
     await connectToDatabase();
 
-    const student = await Student.findOne({ userId: data.userId });
+    let queryId: string | mongoose.Types.ObjectId = data.userId;
+    if (mongoose.Types.ObjectId.isValid(data.userId)) {
+      queryId = new mongoose.Types.ObjectId(data.userId);
+    }
+
+    const student = await Student.findOne({ userId: queryId });
     if (!student) {
       return { success: false, error: "Student profile not found" };
     }

@@ -21,15 +21,28 @@ export default function LecturerDashboardPage() {
   const user = session?.user;
 
   const [assignedCourses, setAssignedCourses] = useState<any[]>([]);
+  const [stats, setStats] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Populate mock assigned courses for lecturer dashboard presentation
-    setAssignedCourses([
-      { id: "1", code: "CSC401", name: "Software Engineering", students: 120, avgAttendance: 92 },
-      { id: "2", code: "CSC403", name: "Database Systems", students: 115, avgAttendance: 88 },
-      { id: "3", code: "CSC405", name: "Computer Networks", students: 98, avgAttendance: 84 },
-    ]);
-  }, []);
+    if (!user?.id) return;
+    
+    async function loadData() {
+      try {
+        const res = await fetch(`/api/lecturer/dashboard?userId=${user?.id}`);
+        if (res.ok) {
+          const json = await res.json();
+          setAssignedCourses(json.assignedCourses || []);
+          setStats(json.stats || null);
+        }
+      } catch (err) {
+        console.error("Failed to load lecturer dashboard", err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    loadData();
+  }, [user?.id]);
 
   return (
     <div className="space-y-6">
@@ -79,7 +92,7 @@ export default function LecturerDashboardPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold tracking-tight">333</div>
+            <div className="text-3xl font-bold tracking-tight">{isLoading ? "..." : (stats?.totalEnrolled || 0)}</div>
             <p className="text-xs text-muted-foreground mt-1">Across all assigned courses</p>
           </CardContent>
         </Card>
@@ -94,7 +107,7 @@ export default function LecturerDashboardPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold tracking-tight">88%</div>
+            <div className="text-3xl font-bold tracking-tight">{isLoading ? "..." : `${stats?.avgAttendance || 0}%`}</div>
             <p className="text-xs text-muted-foreground mt-1">Overall course attendance rate</p>
           </CardContent>
         </Card>
@@ -126,22 +139,32 @@ export default function LecturerDashboardPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {assignedCourses.map((course) => (
-                <TableRow key={course.id}>
-                  <TableCell className="font-bold text-primary">{course.code}</TableCell>
-                  <TableCell className="font-medium">{course.name}</TableCell>
-                  <TableCell>{course.students} Students</TableCell>
-                  <TableCell className="font-semibold text-emerald-500">{course.avgAttendance}%</TableCell>
-                  <TableCell className="text-right">
-                    <Link
-                      href="/lecturer/session"
-                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline"
-                    >
-                      <QrCodeIcon className="size-3.5" /> Launch QR
-                    </Link>
-                  </TableCell>
+              {isLoading ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">Loading courses...</TableCell>
                 </TableRow>
-              ))}
+              ) : assignedCourses.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">No courses assigned yet. Contact your administrator.</TableCell>
+                </TableRow>
+              ) : (
+                assignedCourses.map((course) => (
+                  <TableRow key={course.id}>
+                    <TableCell className="font-bold text-primary">{course.code}</TableCell>
+                    <TableCell className="font-medium">{course.name}</TableCell>
+                    <TableCell>{course.students} Students</TableCell>
+                    <TableCell className="font-semibold text-emerald-500">{course.avgAttendance}%</TableCell>
+                    <TableCell className="text-right">
+                      <Link
+                        href={`/lecturer/session?courseId=${course.id}`}
+                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline"
+                      >
+                        <QrCodeIcon className="size-3.5" /> Launch QR
+                      </Link>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </CardContent>

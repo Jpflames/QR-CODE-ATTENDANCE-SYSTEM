@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { Student } from "@/models/Student";
@@ -18,7 +19,12 @@ export async function GET(req: NextRequest) {
 
     await connectToDatabase();
 
-    const student = await Student.findOne({ userId })
+    let queryId: string | mongoose.Types.ObjectId = userId;
+    if (mongoose.Types.ObjectId.isValid(userId)) {
+      queryId = new mongoose.Types.ObjectId(userId);
+    }
+
+    const student = await Student.findOne({ userId: queryId })
       .populate("departmentId")
       .populate("programmeId")
       .populate("registeredCourses");
