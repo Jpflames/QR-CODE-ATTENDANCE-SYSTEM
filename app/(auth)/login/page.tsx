@@ -51,7 +51,7 @@ export default function LoginPage() {
     try {
       await signIn.email(
         {
-          email: data.email.toLowerCase(),
+          email: data.email,
           password: data.password,
           rememberMe: data.rememberMe,
         },
@@ -72,7 +72,8 @@ export default function LoginPage() {
             }
           },
           onError: (ctx) => {
-            toast.error(ctx.error.message || "Invalid email or password");
+            console.error("Login error context:", ctx);
+            toast.error(`Login Error: ${ctx.error.message || ctx.error.statusText || "Unknown error"}`);
             setIsLoading(false);
           },
         }

@@ -39,7 +39,7 @@ export async function registerUser(input: RegisterInput) {
     try {
       signUpResult = await auth.api.signUpEmail({
         body: {
-          email: validatedData.email,
+          email: validatedData.email.toLowerCase(),
           password: validatedData.password,
           name: validatedData.name,
         },
