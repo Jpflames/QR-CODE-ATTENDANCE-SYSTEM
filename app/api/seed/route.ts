@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { Institution } from "@/models/Institution";
@@ -83,12 +84,29 @@ export async function GET() {
       eeeProg = await Programme.create(eeeProgData);
     }
 
+    // 5. Seed Courses
+    const cscCourses = [
+      { name: "Introduction to Programming", code: "CSC101", institutionId: institution._id.toString(), departmentId: cscDept._id.toString(), level: 100, semester: "first", creditUnits: 3 },
+      { name: "Object Oriented Programming", code: "CSC201", institutionId: institution._id.toString(), departmentId: cscDept._id.toString(), level: 200, semester: "first", creditUnits: 3 },
+      { name: "Data Structures & Algorithms", code: "CSC301", institutionId: institution._id.toString(), departmentId: cscDept._id.toString(), level: 300, semester: "first", creditUnits: 4 },
+      { name: "Software Engineering", code: "CSC401", institutionId: institution._id.toString(), departmentId: cscDept._id.toString(), level: 400, semester: "first", creditUnits: 3 },
+      { name: "Database Systems", code: "CSC403", institutionId: institution._id.toString(), departmentId: cscDept._id.toString(), level: 400, semester: "first", creditUnits: 3 },
+    ];
+    
+    for (const c of cscCourses) {
+      const existingCourse = await mongoose.models.Course.findOne({ code: c.code });
+      if (!existingCourse) {
+        await mongoose.models.Course.create(c);
+      }
+    }
+
     return NextResponse.json({
       success: true,
       message: "Database seeded successfully",
       institution: { id: institution._id, name: institution.name },
       departments: [cscDept.name, eeeDept.name],
       programmes: [cscProg.name, eeeProg.name],
+      courses_seeded: cscCourses.length,
     });
   } catch (error: any) {
     console.error("Seeding error:", error);
