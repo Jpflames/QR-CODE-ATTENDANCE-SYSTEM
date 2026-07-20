@@ -94,16 +94,16 @@ export async function middleware(req: NextRequest) {
   }
 
   // Role Checks
-  if (isStudentRoute && user.role !== "student") {
-    return NextResponse.redirect(new URL(getRedirectUrl(user.role), req.url));
+  if (isStudentRoute && user?.role !== "student") {
+    return NextResponse.redirect(new URL(getRedirectUrl(user?.role), req.url));
   }
 
-  if (isLecturerRoute && user.role !== "lecturer") {
-    return NextResponse.redirect(new URL(getRedirectUrl(user.role), req.url));
+  if (isLecturerRoute && user?.role !== "lecturer") {
+    return NextResponse.redirect(new URL(getRedirectUrl(user?.role), req.url));
   }
 
-  if (isAdminRoute && user.role !== "super_admin" && user.role !== "institution_admin") {
-    return NextResponse.redirect(new URL(getRedirectUrl(user.role), req.url));
+  if (isAdminRoute && user?.role !== "super_admin" && user?.role !== "institution_admin") {
+    return NextResponse.redirect(new URL(getRedirectUrl(user?.role), req.url));
   }
 
   // 4. Apply Security Headers (Helmet headers equivalent)
