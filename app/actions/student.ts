@@ -51,7 +51,7 @@ export async function registerStudentCourses(data: {
 
     // Audit Log
     await AuditLog.create({
-      userId: data.userId,
+      userId: queryId,
       action: "COURSE_REGISTRATION",
       status: "SUCCESS",
       details: `Registered ${data.courseIds.length} courses for ${data.academicSession} (${data.semester} semester)`,
