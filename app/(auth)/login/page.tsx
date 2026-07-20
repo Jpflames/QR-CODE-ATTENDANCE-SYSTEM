@@ -51,7 +51,7 @@ export default function LoginPage() {
     try {
       await signIn.email(
         {
-          email: data.email,
+          email: data.email.toLowerCase(),
           password: data.password,
           rememberMe: data.rememberMe,
         },
