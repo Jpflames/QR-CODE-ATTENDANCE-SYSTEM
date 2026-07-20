@@ -17,7 +17,6 @@ export interface IUser {
 
 const UserSchema = new Schema<IUser>(
   {
-    _id: { type: String, required: true },
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true, lowercase: true, index: true },
     emailVerified: { type: Boolean, default: false },

@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 
 export interface IStudent {
-  userId: string; // Ref to User._id
+  userId: mongoose.Types.ObjectId; // Ref to User._id
   matricNumber: string; // Unique student identifier
   institutionId: string; // Ref to Institution
   departmentId?: mongoose.Types.ObjectId; // Ref to Department
@@ -15,7 +15,7 @@ export interface IStudent {
 
 const StudentSchema = new Schema<IStudent>(
   {
-    userId: { type: String, ref: "User", required: true, unique: true, index: true },
+    userId: { type: Schema.Types.ObjectId, ref: "User", required: true, unique: true, index: true },
     matricNumber: { type: String, required: true, unique: true, index: true },
     institutionId: { type: String, required: true, index: true },
     departmentId: { type: Schema.Types.ObjectId, ref: "Department", index: true },

@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 
 export interface ILecturer {
-  userId: string; // Ref to User._id
+  userId: mongoose.Types.ObjectId; // Ref to User._id
   staffId: string; // Unique staff identifier
   institutionId: string; // Ref to Institution
   departmentId?: mongoose.Types.ObjectId; // Ref to Department
@@ -12,7 +12,7 @@ export interface ILecturer {
 
 const LecturerSchema = new Schema<ILecturer>(
   {
-    userId: { type: String, ref: "User", required: true, unique: true, index: true },
+    userId: { type: Schema.Types.ObjectId, ref: "User", required: true, unique: true, index: true },
     staffId: { type: String, required: true, unique: true, index: true },
     institutionId: { type: String, required: true, index: true },
     departmentId: { type: Schema.Types.ObjectId, ref: "Department", index: true },
