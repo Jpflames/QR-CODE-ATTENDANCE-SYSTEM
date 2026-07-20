@@ -1,6 +1,7 @@
 "use server";
 
 import { connectToDatabase } from "@/lib/mongodb";
+import mongoose from "mongoose";
 import { auth } from "@/lib/auth";
 import { registerSchema, RegisterInput } from "@/validators/auth";
 import { Student } from "@/models/Student";
@@ -64,11 +65,12 @@ export async function registerUser(input: RegisterInput) {
       institutionId: validatedData.institutionId,
     });
 
+    // Convert the string ID from Better Auth into a Mongoose ObjectId to satisfy TypeScript
+    // We do this outside the try block so it's available for the AuditLog later
+    const mongooseUserId = new mongoose.Types.ObjectId(userId);
+
     // 5. Create Profile (Student or Lecturer)
     try {
-      // Convert the string ID from Better Auth into a Mongoose ObjectId to satisfy TypeScript
-      const mongooseUserId = new (require("mongoose").Types.ObjectId)(userId);
-      
       if (validatedData.role === "student") {
         await Student.create({
           userId: mongooseUserId,
