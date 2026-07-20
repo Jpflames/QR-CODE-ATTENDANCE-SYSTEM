@@ -24,7 +24,8 @@ function isRateLimited(ip: string): boolean {
 }
 
 export async function middleware(req: NextRequest) {
-  const ip = req.headers.get("x-forwarded-for") || (req as any).ip || "127.0.0.1";
+  // Try to safely access the NextRequest ip property which is sometimes present on extended requests
+  const ip = req.headers.get("x-forwarded-for") || (req as NextRequest & { ip?: string }).ip || "127.0.0.1";
   
   // 1. Rate Limiting (apply to API routes)
   if (req.nextUrl.pathname.startsWith("/api") && !req.nextUrl.pathname.startsWith("/api/auth/get-session")) {
@@ -43,7 +44,13 @@ export async function middleware(req: NextRequest) {
   }
 
   // 2. Fetch Better Auth Session using the API endpoint
-  let session: any = null;
+  interface SessionData {
+    user?: {
+      role?: string;
+      [key: string]: unknown;
+    };
+  }
+  let session: SessionData | null = null;
   try {
     const cookieHeader = req.headers.get("cookie") || "";
     // Note: We perform a standard fetch to the local API
@@ -55,7 +62,7 @@ export async function middleware(req: NextRequest) {
     });
 
     if (sessionRes.ok) {
-      session = await sessionRes.json();
+      session = await sessionRes.json() as SessionData;
     }
   } catch (error) {
     console.error("Middleware session verification error:", error);
@@ -117,7 +124,7 @@ export async function middleware(req: NextRequest) {
   return response;
 }
 
-function getRedirectUrl(role: string): string {
+function getRedirectUrl(role?: string): string {
   if (role === "super_admin" || role === "institution_admin") return "/admin/dashboard";
   if (role === "lecturer") return "/lecturer/dashboard";
   return "/student/dashboard";
