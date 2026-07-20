@@ -11,6 +11,13 @@ const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/dummy"
 const client = new MongoClient(MONGODB_URI);
 const db = client.db();
 
+const getBaseURL = () => {
+  if (process.env.BETTER_AUTH_URL) return process.env.BETTER_AUTH_URL;
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+  return "http://localhost:3000";
+};
+
 export const auth = betterAuth({
   database: mongodbAdapter(db, {
     client,
@@ -145,7 +152,7 @@ export const auth = betterAuth({
     },
   },
   trustedOrigins: [
-    process.env.BETTER_AUTH_URL || "http://localhost:3000"
+    getBaseURL()
   ],
-  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
+  baseURL: getBaseURL(),
 });
