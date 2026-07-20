@@ -1,11 +1,11 @@
 import mongoose, { Schema } from "mongoose";
 
 export interface ILecturer {
-  userId: string; // Ref to User._id (String)
+  userId: mongoose.Types.ObjectId; // Ref to User._id
   staffId: string; // Unique staff identifier
   institutionId: string; // Ref to Institution
-  departmentId?: any; // Ref to Department
-  assignedCourses: any[]; // Course IDs
+  departmentId?: mongoose.Types.ObjectId; // Ref to Department
+  assignedCourses: mongoose.Types.ObjectId[]; // Course IDs
   createdAt?: Date;
   updatedAt?: Date;
 }
