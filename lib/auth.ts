@@ -3,6 +3,10 @@ import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { MongoClient } from "mongodb";
 import { createAuthMiddleware, APIError } from "better-auth/api";
 
+import { connectToDatabase } from "./mongodb";
+import { User } from "../models/User";
+import { AuditLog } from "../models/AuditLog";
+
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/dummy";
 const client = new MongoClient(MONGODB_URI);
 const db = client.db();
@@ -54,10 +58,6 @@ export const auth = betterAuth({
         const body = ctx.body as any;
         if (!body || !body.email) return;
 
-        // Dynamic imports to avoid circular dependency loops
-        const { connectToDatabase } = await import("./mongodb");
-        const { User } = await import("../models/User");
-
         await connectToDatabase();
         const user = await User.findOne({ email: body.email.toLowerCase() });
 
@@ -84,11 +84,6 @@ export const auth = betterAuth({
       if (ctx.path === "/sign-in/email") {
         const body = ctx.body as any;
         if (!body || !body.email) return;
-
-        // Dynamic imports to avoid circular dependency loops
-        const { connectToDatabase } = await import("./mongodb");
-        const { User } = await import("../models/User");
-        const { AuditLog } = await import("../models/AuditLog");
 
         await connectToDatabase();
         
