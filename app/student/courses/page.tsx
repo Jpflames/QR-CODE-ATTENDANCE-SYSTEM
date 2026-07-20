@@ -43,25 +43,17 @@ export default function StudentCoursesPage() {
     async function loadCourses() {
       setIsLoading(true);
       try {
-        // Fetch student profile to get department
-        const dashRes = await fetch(`/api/student/dashboard?userId=${userId}`);
-        if (dashRes.ok) {
-          const dashData = await dashRes.json();
-          const studentDept = dashData.student?.department;
-
-          // Fetch courses for this department/level
-          const courseRes = await fetch("/api/academic-data?type=institutions");
-          // Fallback mock list of courses if none created yet
-          setCourses([
-            { _id: "c_1", code: "CSC401", name: "Software Engineering", level: 400, semester: "first", creditUnits: 3 },
-            { _id: "c_2", code: "CSC403", name: "Database Systems & Administration", level: 400, semester: "first", creditUnits: 3 },
-            { _id: "c_3", code: "CSC405", name: "Computer Networks & Security", level: 400, semester: "first", creditUnits: 3 },
-            { _id: "c_4", code: "CSC407", name: "Artificial Intelligence & Machine Learning", level: 400, semester: "first", creditUnits: 3 },
-            { _id: "c_5", code: "CSC409", name: "Compiler Construction", level: 400, semester: "first", creditUnits: 2 },
-          ]);
+        const res = await fetch(`/api/student/courses?userId=${userId}`);
+        if (res.ok) {
+          const data = await res.json();
+          setCourses(data.availableCourses || []);
+          setSelectedCourseIds(data.registeredCourses || []);
+        } else {
+          toast.error("Failed to load available courses");
         }
       } catch (err) {
         console.error("Failed to load courses", err);
+        toast.error("An error occurred while loading courses");
       } finally {
         setIsLoading(false);
       }

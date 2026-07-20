@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 
 export interface IAuditLog {
-  userId?: mongoose.Types.ObjectId; // Optional user who performed the action
+  userId?: string; // Optional user who performed the action
   action: string; // e.g. "LOGIN", "LOGOUT", "ATTENDANCE_RECORDED", "QR_GENERATED"
   status: "SUCCESS" | "FAILURE";
   details: string; // JSON or plain description of the event details
@@ -12,7 +12,7 @@ export interface IAuditLog {
 
 const AuditLogSchema = new Schema<IAuditLog>(
   {
-    userId: { type: Schema.Types.ObjectId, ref: "User", index: true },
+    userId: { type: String, ref: "User", index: true },
     action: { type: String, required: true, index: true },
     status: { type: String, enum: ["SUCCESS", "FAILURE"], required: true },
     details: { type: String, required: true },
