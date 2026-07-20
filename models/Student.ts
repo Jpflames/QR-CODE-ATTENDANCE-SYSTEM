@@ -1,13 +1,13 @@
 import mongoose, { Schema } from "mongoose";
 
 export interface IStudent {
-  userId: string; // Ref to User._id (String)
+  userId: mongoose.Types.ObjectId; // Ref to User._id
   matricNumber: string; // Unique student identifier
   institutionId: string; // Ref to Institution
-  departmentId?: any; // Ref to Department
-  programmeId?: any; // Ref to Programme
+  departmentId?: mongoose.Types.ObjectId; // Ref to Department
+  programmeId?: mongoose.Types.ObjectId; // Ref to Programme
   currentLevel: number; // e.g. 100, 200, 300, 400
-  registeredCourses: any[]; // Array of Course IDs
+  registeredCourses: mongoose.Types.ObjectId[]; // Array of Course IDs
   fingerprintId?: string; // Device fingerprint verification
   createdAt?: Date;
   updatedAt?: Date;

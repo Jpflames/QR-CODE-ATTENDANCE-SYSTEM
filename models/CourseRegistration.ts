@@ -1,8 +1,8 @@
 import mongoose, { Schema } from "mongoose";
 
 export interface ICourseRegistration {
-  studentId: any; // Ref to Student (ObjectId)
-  courseId: any; // Ref to Course (ObjectId)
+  studentId: mongoose.Types.ObjectId; // Ref to Student (ObjectId)
+  courseId: mongoose.Types.ObjectId; // Ref to Course (ObjectId)
   academicSession: string; // e.g. "2025/2026"
   semester: "first" | "second";
   status: "registered" | "dropped" | "approved";

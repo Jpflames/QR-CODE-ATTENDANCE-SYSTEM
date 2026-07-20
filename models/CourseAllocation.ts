@@ -1,8 +1,8 @@
 import mongoose, { Schema } from "mongoose";
 
 export interface ICourseAllocation {
-  lecturerId: any; // Ref to Lecturer (ObjectId)
-  courseId: any; // Ref to Course (ObjectId)
+  lecturerId: mongoose.Types.ObjectId; // Ref to Lecturer (ObjectId)
+  courseId: mongoose.Types.ObjectId; // Ref to Course (ObjectId)
   academicSession: string; // e.g. "2025/2026"
   semester: "first" | "second";
   createdAt?: Date;
