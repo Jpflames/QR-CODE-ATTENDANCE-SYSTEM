@@ -23,7 +23,7 @@ export const auth = betterAuth({
     client,
     usePlural: false,
   }),
-  secret: process.env.BETTER_AUTH_SECRET,
+  secret: process.env.BETTER_AUTH_SECRET || "fallback_secret_for_development_only_please_change_in_production",
   emailAndPassword: {
     enabled: true,
     autoSignIn: false, // Require manual sign in (allows verification checks)
@@ -152,7 +152,10 @@ export const auth = betterAuth({
     },
   },
   trustedOrigins: [
-    getBaseURL()
-  ],
+    getBaseURL(),
+    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "",
+    process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "",
+    process.env.NEXT_PUBLIC_APP_URL || ""
+  ].filter(Boolean),
   baseURL: getBaseURL(),
 });
