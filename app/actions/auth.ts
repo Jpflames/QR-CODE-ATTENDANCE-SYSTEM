@@ -66,9 +66,12 @@ export async function registerUser(input: RegisterInput) {
 
     // 5. Create Profile (Student or Lecturer)
     try {
+      // Convert the string ID from Better Auth into a Mongoose ObjectId to satisfy TypeScript
+      const mongooseUserId = new (require("mongoose").Types.ObjectId)(userId);
+      
       if (validatedData.role === "student") {
         await Student.create({
-          userId,
+          userId: mongooseUserId,
           matricNumber: validatedData.matricNumber,
           institutionId: validatedData.institutionId,
           departmentId: validatedData.departmentId,
@@ -77,7 +80,7 @@ export async function registerUser(input: RegisterInput) {
         });
       } else if (validatedData.role === "lecturer") {
         await Lecturer.create({
-          userId,
+          userId: mongooseUserId,
           staffId: validatedData.staffId,
           institutionId: validatedData.institutionId,
           departmentId: validatedData.departmentId,
@@ -96,7 +99,7 @@ export async function registerUser(input: RegisterInput) {
     const userAgent = reqHeaders.get("user-agent") || "unknown";
 
     await AuditLog.create({
-      userId,
+      userId: mongooseUserId,
       action: "REGISTER",
       status: "SUCCESS",
       details: `User registered successfully as ${validatedData.role}`,
